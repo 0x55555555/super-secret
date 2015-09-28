@@ -18,7 +18,7 @@ class CryptBase
     else if (options.key_split) {
       this._secrets = [];
       for (var i = 0; i < options.key_split; ++i) {
-        this._secrets.push(crypto.randomBytes(64).toString('hex'));
+        this._secrets.push(crypto.randomBytes(64).toString(this.encoding()));
       }
     }
   }
@@ -38,6 +38,11 @@ class CryptBase
     return 'aes-256-ctr';
   }
 
+  encoding()
+  {
+    return 'hex';
+  }
+
 }
 
 class Encryptor extends CryptBase
@@ -50,8 +55,8 @@ class Encryptor extends CryptBase
   encrypt(secret, segments)
   {
     let cipher = crypto.createCipher(this.algorithm(), this.secret_string());
-    let crypted = cipher.update(secret.data, 'utf8', 'hex');
-    crypted += cipher.final('hex');
+    let crypted = cipher.update(secret.data, 'utf8', this.encoding());
+    crypted += cipher.final(this.encoding());
 
     let output = [];
     let count = crypted.length / segments;
@@ -78,7 +83,7 @@ class Decryptor extends CryptBase
   {
     let secret_input = enc_secret.join("");
     var decipher = crypto.createDecipher(this.algorithm(), this.secret_string())
-    var dec = decipher.update(secret_input, 'hex', 'utf8')
+    var dec = decipher.update(secret_input, this.encoding(), 'utf8')
     dec += decipher.final('utf8');
     return dec;
   }

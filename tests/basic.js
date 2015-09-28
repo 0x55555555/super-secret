@@ -27,6 +27,9 @@ describe('secret', function() {
     });
     expect(decryptor).to.be.a('Object');
 
+    console.log(encryptor.secrets());
+    console.log(encrypted);
+
     let decrypted = decryptor.decrypt(encrypted);
     expect(decrypted).to.be.equal('secret pork');
   });
